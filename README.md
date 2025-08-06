@@ -30,11 +30,30 @@ Ein browserbasiertes Kalkulationstool entwickeln, das die vorhandene Excelbasis 
 
 \*Definition der Module:\*
 
-\* In JSON-Dateien (beliebig viele, anpassbar)
+* In JSON-Dateien, je Maschinenbaugruppe eine Datei (z. B. `sieb_typ_a.json`, `foerderband.json`)
+* Jede Datei enthält:
 
-\* Module können nachgeladen oder neu erstellt werden
+  1. **Globale Referenzen**:
 
-\*Workflow in der Applikation:\*
+     * Verzeichnis der globalen Parameter, die genutzt werden (z. B. Netzspannung, `EING_SPS`)
+     * Kennzeichnung, ob diese im Frontend überschreibbar sind
+  2. **Benutzer­eingabe­parameter**:
+
+     * Parameter, die beim Hinzufügen des Moduls individuell abgefragt werden (z. B. `MotorLeistung`, `AnzahlReissleine`)
+  3. **Ausgabe­parameter**:
+
+     * Parameter, die nach interner Berechnung zur Verfügung stehen und von anderen Modulen referenziert werden können (z. B. `Gesamtstrom`, `Kabellänge`)
+  4. **Berechnungs­reihenfolge**:
+
+     * Liste von Python-Funktionen oder -Skripts (Namenskonvention: `modulname_schrittX(parameter1, parameter2)`), die sequenziell ausgeführt werden
+
+*Dateinamenskonvention & Organisation:*
+
+* Hauptordner `/modules`
+* Dateien benannt nach Maschinenbaugruppe in lowercase mit Unterstrich: `<gruppe>_mod.json` (z. B. `foerderband_mod.json`)
+* Zu jeder JSON-Definition ein Python-Skript mit gleicher Basis: `<gruppe>_logic.py`, das die Berechnungsfunktionen enthält
+
+*Workflow in der Applikation:*\*
 
 1\. Globale Parameter befüllen
 
@@ -52,16 +71,16 @@ Einige Globalparameter sollten aber vor "Modulübersteuerung" geschützt werden,
 
 **Eingabeparameter**
 
-| Parameter              | Typ     | Beschreibung                        |
-| ---------------------- | ------- | ----------------------------------- |
-| Nennleistung Motor     | kW      | Leistungsklasse des Motors          |
-| Start Typ              | Auswahl | DOL, FU, Softstart                  |
-| Reversierbar           | Bool    | Motor reversierbar (ja/nein)        |
-| Bremse                 | Bool    | Bremse vorhanden (ja/nein)          |
-| 87 Hz Betrieb bei FU   | Bool    | Betrieb mit 87 Hz möglich (ja/nein) |
-| Länge Förderaggregat   | Integer | Länge des Förderaggregats in Metern |
-| Anzahl Reißleine       | Integer | Anzahl Seilzugschalter pro Band     |
-| Anzahl Not-Halt Taster | Integer | Anzahl Not-Halt Taster im Modul     |
+| Parameter              | Typ     | Beschreibung                          |
+| ---------------------- | ------- | ------------------------------------- |
+| Nennleistung Motor     | kW      | Leistungsklasse des Motors            |
+| Start Typ              | Auswahl | DOL, FU, Softstart                    |
+| Reversierbar           | Bool    | Motor reversierbar (ja/nein)          |
+| Bremse                 | Bool    | Bremse vorhanden (ja/nein)            |
+| 87 Hz Betrieb bei FU   | Bool    | Betrieb mit 87 Hz Kennlinie (ja/nein) |
+| Länge Förderaggregat   | Integer | Länge des Förderaggregats in Metern   |
+| Anzahl Reißleine       | Integer | Anzahl Seilzugschalter pro Band       |
+| Anzahl Not-Halt Taster | Integer | Anzahl Not-Halt Taster im Modul       |
 
 **Ausgabeparameter**
 
@@ -75,7 +94,56 @@ Einige Globalparameter sollten aber vor "Modulübersteuerung" geschützt werden,
 
 \---
 
-\## 6. Anforderungen an die Applikation
+\## 2. Globale Parameter
+
+| Parameter                            | Typ/Auswahl                 |
+| ------------------------------------ | --------------------------- |
+| Anlagentyp                           | Sternsieb, Splitter, …      |
+| Ziel-Land                            | Deutschland, Nordamerika, … |
+| Anschlussspannung & Frequenz         | 400 V/50 Hz, 600 V/60 Hz    |
+| # Motoren mit FU & Kabellänge > 50 m | Integer                     |
+| # Bänder mit Seilzugschalter         | Integer                     |
+| # Not-Aus extern                     | Integer                     |
+| Steuerungs‑verknüpfung               | Bool                        |
+| Extra Gehäuse für Bedienpult         | Bool                        |
+| Fernwartung                          | Bool                        |
+| Reparaturschalter                    | intern, extern, nein        |
+| SPS                                  | S7‑1200, S7‑1500            |
+| Touch Panel                          | 7″, 12″, 15″                |
+| Funkfernbedienung                    | Bool                        |
+| # Anlaufwarnung                      | Integer                     |
+| Einzeladerbeschriftung               | Bool                        |
+| Klimagerät                           | Bool                        |
+| Umgebungstemperatur                  | Auswahl (z. B. 25 °C–35 °C) |
+| Durchschnittliche Kabellänge         | Decimal (Meter)             |
+| Montage kalkuliert                   | Bool                        |
+| Verbissichere Kabel                  | Bool                        |
+
+---
+
+## 3. Persistenz & Datenhaltung
+
+* **Kalkulationsspeicherung:**
+
+  * Benutzer kann Kalkulationen speichern und später wieder laden.
+
+  * Flexible Speicheroptionen:
+
+    * Dateibasiert (z. B. JSON/XML-Dateien)
+
+    * SQLite-Datenbank
+
+    * MS SQL Server (MSSQL)
+
+* **Artikeldaten:**
+
+  * Primär: Anbindung an MS SQL Server per interne Artikelnummern (zukünftige Integration)
+
+  * Fallback: Lokale SQLite-Tabelle mit Alternativ- bzw. Standardartikeln
+
+---
+
+## 4. Antriebe & Kabel Anforderungen an die Applikation
 
 \* Containerisiert (Docker)
 
