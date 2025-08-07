@@ -30,30 +30,136 @@ Ein browserbasiertes Kalkulationstool entwickeln, das die vorhandene Excelbasis 
 
 \*Definition der Module:\*
 
-* In JSON-Dateien, je Maschinenbaugruppe eine Datei (z. B. `sieb_typ_a.json`, `foerderband.json`)
-* Jede Datei enthält:
+* In JSON-Dateien, je Maschinenbaugruppe eine Datei (z. B. `sieb_typ_a_mod.json`, `foerderband_mod.json`).
+* Jede Modul-Definition enthält:
 
-  1. **Globale Referenzen**:
+  1. **Parameter-Definitionen (Key–Value-Paare)**:
 
-     * Verzeichnis der globalen Parameter, die genutzt werden (z. B. Netzspannung, `EING_SPS`)
-     * Kennzeichnung, ob diese im Frontend überschreibbar sind
-  2. **Benutzer­eingabe­parameter**:
+  ```json
+  {
+    "parameterName": {
+      "datatype": "Integer|Decimal|Bool|Auswahl|Text|...",
+      "defaultValue": null,
+      "hardLimits": { "min": 0, "max": 100 },          
+      "softLimits": {
+        "min": 10,
+        "max": 80,
+        "warningMessage": "Außerhalb üblicher Werte!"
+      },
+      "options": ["OptionA", "OptionB", ...],
+      "source": ["global", "user", "reference"],
+      "editableInFrontend": true,
+      "reference": "EING_NENN_SPANNUNG"
+    }
+  }
+  ```
 
-     * Parameter, die beim Hinzufügen des Moduls individuell abgefragt werden (z. B. `MotorLeistung`, `AnzahlReissleine`)
-  3. **Ausgabe­parameter**:
+  * **datatype**: Datentyp des Parameters.
+  * **defaultValue**: Vorgabewert aus Global- oder Referenzdaten.
+  * **hardLimits**: Absolute Grenzen, nicht überschreitbar.
+  * **softLimits**: Wertebereich, außerhalb wird gewarnt, aber akzeptiert.
+  * **options**: Auswahlliste für Auswahlparameter.
+  * **source**: Gibt an, woher der Parameter stammen kann.
+  * **editableInFrontend**: Steuert, ob der Nutzer den Wert ändern darf.
+  * **reference**: Bei `source: ["reference"]` verweist auf globalen oder anderen Modul-Parameter.
 
-     * Parameter, die nach interner Berechnung zur Verfügung stehen und von anderen Modulen referenziert werden können (z. B. `Gesamtstrom`, `Kabellänge`)
-  4. **Berechnungs­reihenfolge**:
+2. **Globale Referenzen**:
 
-     * Liste von Python-Funktionen oder -Skripts (Namenskonvention: `modulname_schrittX(parameter1, parameter2)`), die sequenziell ausgeführt werden
+   * Liste globaler Parameter-Codes (z. B. `EING_TEMP`, `EING_SPS`), die automatisch eingebunden werden.
+   * Ggf. mit `editableInFrontend=false`, um Überschreibung zu verhindern.
 
-*Dateinamenskonvention & Organisation:*
+3. **Benutzereingabe-Parameter**:
+
+   * Parameter, die der Anwender beim Hinzufügen des Moduls ausfüllt.
+
+4. **Ausgabeparameter**:
+
+   * Parameter, die nach Berechnung verfügbar sind und von anderen Modulen referenziert werden.
+
+5. **Berechnungsreihenfolge**:
+
+   * Sequenz von Python-Funktionen in `<gruppe>_logic.py`, z. B.:
+
+     ```python
+     def foerderband_schritt1(params):
+         # Berechnung A
+         return updated_params
+     def foerderband_schritt2(params):
+         # Berechnung B
+         return updated_params
+     ```
+
+*Dateinamenskonvention & Organisation:* & Organisation:\*
 
 * Hauptordner `/modules`
 * Dateien benannt nach Maschinenbaugruppe in lowercase mit Unterstrich: `<gruppe>_mod.json` (z. B. `foerderband_mod.json`)
 * Zu jeder JSON-Definition ein Python-Skript mit gleicher Basis: `<gruppe>_logic.py`, das die Berechnungsfunktionen enthält
 
-*Workflow in der Applikation:*\*
+### Definition des Globalmoduls
+
+* Das Globalmodul wird analog zu Anlagenmodulen in einer JSON-Datei (`global_mod.json`) definiert.
+* Es darf pro Projekt nur ein Globalmodul geben und muss vor anderen Modulen "eingebaut" werden.
+* Struktur der `global_mod.json`:
+
+  ```json
+  {
+    "globalParameters": {
+      "EING_NENN_SPANNUNG": {
+        "datatype": "Auswahl",
+        "options": ["400V", "600V"],
+        "defaultValue": "400V",
+        "hardLimits": null,
+        "softLimits": null,
+        "editableInFrontend": false
+      },
+      "EING_TEMP": {
+        "datatype": "Auswahl",
+        "options": ["25°C", "30°C", "35°C"],
+        "defaultValue": "25°C",
+        "hardLimits": null,
+        "softLimits": null,
+        "editableInFrontend": false
+      }
+      // ... weitere globale Parameter
+    }
+  }
+  ```
+* Globalmodul ist Quelle für `source: ["global"]` und wird in anderen Modulen einmalig referenziert.
+
+### Cross-Modul Referenzen
+
+* **Modul-Metadaten:**
+
+  * Jedes Modul definiert in seiner JSON-Datei zusätzlich:
+
+    ```json
+    {
+      "moduleName": "Förderband",        // lesbarer Name
+      "moduleId": "FB001",               // eindeutige alphanumerische ID (max. 6 Zeichen)
+      // ... weitere Definitionen
+    }
+    ```
+* **Referenzierung von Parametern:**
+
+  * Module untereinander: über `<moduleId>.<parameterName>`, z. B.:
+
+    ```json
+    "reference": "FB001.MotorLeistung"
+    ```
+  * Globalmodul: über `global.<parameterName>`, z. B.:
+
+    ```json
+    "reference": "global.EING_NENN_SPANNUNG"
+    ```
+* **Lookup-Tabelle:**
+
+  * Das System lädt alle Modul-Definitionen und das Globalmodul und erzeugt eine zentrale Lookup-Tabelle:
+
+    * Schlüssel: `<moduleId>.<parameterName>` bzw. `global.<parameterName>`
+    * Wert: aktueller Parameterwert
+* Referenzierte Werte können als Default in Zielmodulen übernommen oder in Berechnungen verarbeitet werden.
+
+*Workflow in der Applikation:*\*\*\*
 
 1\. Globale Parameter befüllen
 
