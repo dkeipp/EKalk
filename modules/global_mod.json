@@ -1,0 +1,17 @@
+{
+  "moduleName": "Global",
+  "moduleId": "GLOBAL",
+  "logic": "global",
+  "parameters": {
+    "EING_NENN_SPANNUNG": {
+      "datatype": "Auswahl",
+      "options": ["400V", "600V"],
+      "defaultValue": "400V",
+      "hardLimits": null,
+      "softLimits": null,
+      "source": ["user"],
+      "editableInFrontend": true
+    }
+  },
+  "steps": []
+}

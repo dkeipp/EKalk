@@ -1,0 +1,24 @@
+{
+  "moduleName": "Förderband",
+  "moduleId": "FB001",
+  "logic": "foerderband",
+  "parameters": {
+    "MotorLeistung": {
+      "datatype": "Decimal",
+      "defaultValue": 5.5,
+      "hardLimits": { "min": 0, "max": 100 },
+      "softLimits": { "min": 1, "max": 75, "warningMessage": "Außerhalb üblicher Werte!" },
+      "source": ["user"],
+      "editableInFrontend": true
+    },
+    "Netzspannung": {
+      "datatype": "Auswahl",
+      "defaultValue": null,
+      "options": ["400V", "600V"],
+      "source": ["global"],
+      "reference": "EING_NENN_SPANNUNG",
+      "editableInFrontend": false
+    }
+  },
+  "steps": ["foerderband_schritt1"]
+}
