@@ -39,9 +39,11 @@ class ModuleDefinition:
         )
 
 class ModuleRuntime:
-    def __init__(self, definition: ModuleDefinition):
+    def __init__(self, definition: ModuleDefinition, overrides: dict | None = None):
         self.definition = definition
         self.values = {name: p.defaultValue for name, p in definition.parameters.items()}
+        if overrides:
+            self.values.update(overrides)
 
     def run(self) -> dict:
         logic = importlib.import_module(f"modules.{self.definition.logic}_logic")
@@ -54,9 +56,9 @@ class ModuleRuntime:
 class ProjectRuntime:
     """Simple container tying a global module with other modules."""
 
-    def __init__(self, global_def: ModuleDefinition, module_defs: list[ModuleDefinition]):
+    def __init__(self, global_def: ModuleDefinition, module_defs: list[tuple[ModuleDefinition, dict | None]]):
         self.global_runtime = ModuleRuntime(global_def)
-        self.modules = [ModuleRuntime(md) for md in module_defs]
+        self.modules = [ModuleRuntime(md, overrides) for md, overrides in module_defs]
 
     def _apply_globals(self, module: ModuleRuntime, global_values: dict):
         for name, param in module.definition.parameters.items():
@@ -74,5 +76,48 @@ if __name__ == "__main__":
     base = Path(__file__).parent / "modules"
     global_def = ModuleDefinition.from_json(base / "global_mod.json")
     fb_def = ModuleDefinition.from_json(base / "foerderband_mod.json")
-    project = ProjectRuntime(global_def, [fb_def, fb_def])
-    print(project.run())
+    sp_def = ModuleDefinition.from_json(base / "splitter_mod.json")
+
+    modules = [
+        (fb_def, {
+            "ID": "H101",
+            "Bezeichnung": "Zuführband",
+            "Laenge": 6,
+            "MotorLeistung": 5.5,
+            "StartArt": "DOL",
+            "Reparaturschalter": "integriert",
+            "Reissleine": "beidseitig",
+        }),
+        (sp_def, {
+            "ID": "F102",
+            "Bezeichnung": "Splitter",
+            "Laenge": 5,
+            "MotorLeistung": 5.5,
+            "StartArt": "FU",
+            "Frequenz": 87,
+            "Reparaturschalter": "extern",
+            "Reissleine": "links",
+            "Antriebe": 3,
+        }),
+        (fb_def, {
+            "ID": "H103",
+            "Bezeichnung": "Überkorn",
+            "Laenge": 25,
+            "MotorLeistung": 9.2,
+            "StartArt": "DOL",
+            "Reparaturschalter": "integriert",
+            "Reissleine": "beidseitig",
+        }),
+        (fb_def, {
+            "ID": "H104",
+            "Bezeichnung": "Unterkorn",
+            "Laenge": 10,
+            "MotorLeistung": 4.0,
+            "StartArt": "DOL",
+            "Reparaturschalter": "integriert",
+            "Reissleine": "einseitig",
+        }),
+    ]
+
+    project = ProjectRuntime(global_def, modules)
+    print(json.dumps(project.run(), indent=2))

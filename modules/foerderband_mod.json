@@ -3,6 +3,18 @@
   "moduleId": "FB001",
   "logic": "foerderband",
   "parameters": {
+    "ID": {
+      "datatype": "Text",
+      "defaultValue": "",
+      "source": ["user"],
+      "editableInFrontend": true
+    },
+    "Bezeichnung": {
+      "datatype": "Text",
+      "defaultValue": "",
+      "source": ["user"],
+      "editableInFrontend": true
+    },
     "MotorLeistung": {
       "datatype": "Decimal",
       "defaultValue": 5.5,
@@ -11,6 +23,40 @@
       "source": ["user"],
       "editableInFrontend": true
     },
+    "Laenge": {
+      "datatype": "Decimal",
+      "defaultValue": 0,
+      "source": ["user"],
+      "editableInFrontend": true
+    },
+    "StartArt": {
+      "datatype": "Auswahl",
+      "defaultValue": "DOL",
+      "options": ["DOL", "FU"],
+      "source": ["user"],
+      "editableInFrontend": true
+    },
+    "Reparaturschalter": {
+      "datatype": "Auswahl",
+      "defaultValue": "integriert",
+      "options": ["integriert", "extern"],
+      "source": ["user"],
+      "editableInFrontend": true
+    },
+    "Reissleine": {
+      "datatype": "Auswahl",
+      "defaultValue": "beidseitig",
+      "options": ["beidseitig", "links", "rechts", "einseitig", "keine"],
+      "source": ["user"],
+      "editableInFrontend": true
+    },
+    "AvgCableLength": {
+      "datatype": "Decimal",
+      "defaultValue": null,
+      "source": ["global"],
+      "reference": "AVG_KABEL_LAENGE",
+      "editableInFrontend": false
+    },
     "Netzspannung": {
       "datatype": "Auswahl",
       "defaultValue": null,
@@ -18,7 +64,14 @@
       "source": ["global"],
       "reference": "EING_NENN_SPANNUNG",
       "editableInFrontend": false
+    },
+    "MaxSpannungsabfall": {
+      "datatype": "Decimal",
+      "defaultValue": null,
+      "source": ["global"],
+      "reference": "MAX_SPANNUNGSABFALL",
+      "editableInFrontend": false
     }
   },
-  "steps": ["foerderband_schritt1"]
+  "steps": ["calculate"]
 }

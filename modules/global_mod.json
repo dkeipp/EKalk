@@ -3,12 +3,48 @@
   "moduleId": "GLOBAL",
   "logic": "global",
   "parameters": {
+    "Kalkulationsname": {
+      "datatype": "Text",
+      "defaultValue": "Anfrage Kunde X",
+      "source": ["user"],
+      "editableInFrontend": true
+    },
+    "Kunde": {
+      "datatype": "Text",
+      "defaultValue": "X Recycling",
+      "source": ["user"],
+      "editableInFrontend": true
+    },
+    "Kundennummer": {
+      "datatype": "Text",
+      "defaultValue": "123654",
+      "source": ["user"],
+      "editableInFrontend": true
+    },
     "EING_NENN_SPANNUNG": {
       "datatype": "Auswahl",
       "options": ["400V", "600V"],
       "defaultValue": "400V",
       "hardLimits": null,
       "softLimits": null,
+      "source": ["user"],
+      "editableInFrontend": true
+    },
+    "FREQUENZ": {
+      "datatype": "Decimal",
+      "defaultValue": 50,
+      "source": ["user"],
+      "editableInFrontend": true
+    },
+    "AVG_KABEL_LAENGE": {
+      "datatype": "Decimal",
+      "defaultValue": 25,
+      "source": ["user"],
+      "editableInFrontend": true
+    },
+    "MAX_SPANNUNGSABFALL": {
+      "datatype": "Decimal",
+      "defaultValue": 2.5,
       "source": ["user"],
       "editableInFrontend": true
     }
