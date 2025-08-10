@@ -1,0 +1,90 @@
+[
+  {
+    "manufacturer": "Eaton",
+    "type_code": "PKZM0-1-SPI32",
+    "article_no": "199193",
+    "Iu_A": 1.0,
+    "Ir_from_A": 0.63,
+    "Ir_to_A": 1.0
+  },
+  {
+    "manufacturer": "Eaton",
+    "type_code": "PKZM0-1,6-SPI32",
+    "article_no": "199194",
+    "Iu_A": 1.6,
+    "Ir_from_A": 1.0,
+    "Ir_to_A": 1.6
+  },
+  {
+    "manufacturer": "Eaton",
+    "type_code": "PKZM0-2,5-SPI32",
+    "article_no": "199195",
+    "Iu_A": 2.5,
+    "Ir_from_A": 1.6,
+    "Ir_to_A": 2.5
+  },
+  {
+    "manufacturer": "Eaton",
+    "type_code": "PKZM0-4-SPI32",
+    "article_no": "199196",
+    "Iu_A": 4.0,
+    "Ir_from_A": 2.5,
+    "Ir_to_A": 4.0
+  },
+  {
+    "manufacturer": "Eaton",
+    "type_code": "PKZM0-6,3-SPI32",
+    "article_no": "199197",
+    "Iu_A": 6.3,
+    "Ir_from_A": 4.0,
+    "Ir_to_A": 6.3
+  },
+  {
+    "manufacturer": "Eaton",
+    "type_code": "PKZM0-10-SPI32",
+    "article_no": "199198",
+    "Iu_A": 10.0,
+    "Ir_from_A": 6.3,
+    "Ir_to_A": 10.0
+  },
+  {
+    "manufacturer": "Eaton",
+    "type_code": "PKZM0-12-SPI32",
+    "article_no": "199199",
+    "Iu_A": 12.0,
+    "Ir_from_A": 8.0,
+    "Ir_to_A": 12.0
+  },
+  {
+    "manufacturer": "Eaton",
+    "type_code": "PKZM0-16-SPI32",
+    "article_no": "199200",
+    "Iu_A": 16.0,
+    "Ir_from_A": 12.0,
+    "Ir_to_A": 16.0
+  },
+  {
+    "manufacturer": "Eaton",
+    "type_code": "PKZM0-20-SPI32",
+    "article_no": "199201",
+    "Iu_A": 20.0,
+    "Ir_from_A": 16.0,
+    "Ir_to_A": 20.0
+  },
+  {
+    "manufacturer": "Eaton",
+    "type_code": "PKZM0-25-SPI32",
+    "article_no": "199202",
+    "Iu_A": 25.0,
+    "Ir_from_A": 20.0,
+    "Ir_to_A": 25.0
+  },
+  {
+    "manufacturer": "Eaton",
+    "type_code": "PKZM0-32-SPI32",
+    "article_no": "199203",
+    "Iu_A": 32.0,
+    "Ir_from_A": 25.0,
+    "Ir_to_A": 32.0
+  }
+]
