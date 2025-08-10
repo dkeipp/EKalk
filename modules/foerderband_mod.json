@@ -23,6 +23,18 @@
       "source": ["user"],
       "editableInFrontend": true
     },
+    "Antriebe": {
+      "datatype": "Integer",
+      "defaultValue": 1,
+      "source": ["user"],
+      "editableInFrontend": true
+    },
+    "GemeinsamerStarter": {
+      "datatype": "Bool",
+      "defaultValue": false,
+      "source": ["user"],
+      "editableInFrontend": true
+    },
     "Laenge": {
       "datatype": "Decimal",
       "defaultValue": 0,

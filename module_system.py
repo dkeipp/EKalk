@@ -120,4 +120,4 @@ if __name__ == "__main__":
     ]
 
     project = ProjectRuntime(global_def, modules)
-    print(json.dumps(project.run(), indent=2))
+    print(json.dumps(project.run(), indent=2, ensure_ascii=False))
