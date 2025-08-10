@@ -1,0 +1,81 @@
+{
+  "moduleName": "Schaltschrank",
+  "moduleId": "SC001",
+  "logic": "schaltschrank",
+  "parameters": {
+    "id": {
+      "datatype": "Text",
+      "defaultValue": "",
+      "source": ["user"],
+      "editableInFrontend": true
+    },
+    "label": {
+      "datatype": "Text",
+      "defaultValue": "",
+      "source": ["user"],
+      "editableInFrontend": true
+    },
+    "virtual_cabinet": {
+      "datatype": "Bool",
+      "defaultValue": true,
+      "source": ["user"],
+      "editableInFrontend": true
+    },
+    "main_switch_size": {
+      "datatype": "Auswahl",
+      "defaultValue": null,
+      "options": ["63A", "125A", "250A", "400A", "630A"],
+      "source": [],
+      "editableInFrontend": false
+    },
+    "capacity_reserve_percent": {
+      "datatype": "Decimal",
+      "defaultValue": null,
+      "source": [],
+      "editableInFrontend": false
+    },
+    "needs_supply_field": {
+      "datatype": "Bool",
+      "defaultValue": false,
+      "source": [],
+      "editableInFrontend": false
+    },
+      "elements": {
+        "datatype": "Objekt",
+        "defaultValue": {},
+        "source": [],
+        "editableInFrontend": false
+      },
+      "motor_currents": {
+        "datatype": "Liste",
+        "defaultValue": [],
+        "source": [],
+        "editableInFrontend": false
+      },
+      "motor_rated_loads": {
+        "datatype": "Liste",
+        "defaultValue": [],
+        "source": [],
+        "editableInFrontend": false
+      },
+      "motor_operating_loads": {
+        "datatype": "Liste",
+        "defaultValue": [],
+        "source": [],
+        "editableInFrontend": false
+      },
+      "total_motor_rated_load": {
+        "datatype": "Decimal",
+        "defaultValue": 0,
+        "source": [],
+        "editableInFrontend": false
+      },
+      "total_motor_operating_load": {
+        "datatype": "Decimal",
+        "defaultValue": 0,
+        "source": [],
+        "editableInFrontend": false
+      }
+  },
+  "steps": ["calculate"]
+}

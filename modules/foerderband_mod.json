@@ -35,6 +35,12 @@
       "source": ["user"],
       "editableInFrontend": true
     },
+      "operating_load_factor": {
+      "datatype": "Decimal",
+      "defaultValue": 0.8,
+      "source": ["user"],
+      "editableInFrontend": true
+    },
       "length": {
       "datatype": "Decimal",
       "defaultValue": 0,

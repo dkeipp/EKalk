@@ -16,13 +16,17 @@ Ein browserbasiertes Kalkulationstool entwickeln, das die vorhandene Excelbasis 
 
 &#x20;  \* Ermitteln das notwendige Material pro Modul (Schaltschrank- und Baustellenbedarf)
 
+&#x20;  \* Besitzen den Eingabeparameter `operating_load_factor` (Standard 0,8) und liefern daraus den Ausgabeparameter `motor_operating_load`
+
 2\. \*\*Schalt­schrank­module\*\*
 
-&#x20;  \* Sammeln Elemente aller ausgewählten Prozessmodule
+&#x20;  \* Sammeln Elemente aller ausgewählten Prozessmodule gruppiert nach Herkunfts-ID
 
-&#x20;  \* Berechnen benötigte Schrankgröße
+&#x20;  \* Schlagen Hauptschaltergrößen vor und berechnen Kapazitätsreserven
 
-&#x20;  \* Überwachen Kapazität (inkl. Reserve)
+&#x20;  \* Summieren `motor_rated_load` und `motor_operating_load` aller Module
+
+&#x20;  \* Überwachen Schrankgröße (Konzept für spätere Füllgradkontrolle)
 
 3\. \*\*Schalt­raum­module\*\*
 
@@ -103,28 +107,54 @@ Ein browserbasiertes Kalkulationstool entwickeln, das die vorhandene Excelbasis 
 
   ```json
   {
-      "globalParameters": {
-        "input_voltage": {
-          "datatype": "Auswahl",
-          "options": ["400V", "600V"],
-          "defaultValue": "400V",
-          "hardLimits": null,
-          "softLimits": null,
-          "editableInFrontend": false
-        },
-      "EING_TEMP": {
+    "moduleName": "Global",
+    "moduleId": "GLOBAL",
+    "logic": "global",
+    "parameters": {
+      "input_voltage": {
         "datatype": "Auswahl",
-        "options": ["25°C", "30°C", "35°C"],
-        "defaultValue": "25°C",
-        "hardLimits": null,
-        "softLimits": null,
-        "editableInFrontend": false
-      }
+        "options": ["400V", "600V"],
+        "defaultValue": "400V",
+        "editableInFrontend": true
+      },
       // ... weitere globale Parameter
     }
   }
   ```
 * Globalmodul ist Quelle für `source: ["global"]` und wird in anderen Modulen einmalig referenziert.
+
+### Definition des Schaltschrankmoduls
+
+* Das Schaltschrankmodul (`schaltschrank_mod.json`) sammelt zunächst alle schaltschrankrelevanten Positionen in einem virtuellen Schrank und gruppiert sie nach Herkunfts-ID.
+* Es schlägt auf Basis der Summe aller Motornennströme (× 0,75) automatisch eine Hauptschalterbaugröße aus 63A, 125A, 250A, 400A oder 630A vor und berechnet die Kapazitätsreserve in %.
+* Zusätzlich summiert es `motor_rated_load` und `motor_operating_load` aller Module und stellt diese Gesamtwerte bereit.
+* Ab 400A wird automatisch ein separates Einspeisefeld markiert, das den Hauptschalter enthält.
+* Komponenten können anschließend einem realen Gehäuse zugeordnet werden; ein Konzept zur Überwachung der Füllgrade folgt.
+
+Beispiel für einen virtuellen Schaltschrank:
+
+```python
+from pathlib import Path
+from module_system import ModuleDefinition, ModuleRuntime
+
+sc_def = ModuleDefinition.from_json(Path("modules/schaltschrank_mod.json"))
+runtime = ModuleRuntime(
+    sc_def,
+    {
+        "id": "SC1",
+        "label": "Virtueller Schrank",
+        "virtual_cabinet": True,
+        "elements": {
+            "H101": [{"type": "contactor", "rated_current": 10}],
+            "F102": [{"type": "frequency_inverter", "rated_current": 12}]
+        },
+        "motor_currents": [10, 12],
+        "motor_rated_loads": [5.5, 5.5],
+        "motor_operating_loads": [4.4, 4.4],
+    },
+)
+print(runtime.run())
+```
 
 ### Cross-Modul Referenzen
 
@@ -202,28 +232,17 @@ Einige Globalparameter sollten jedoch vor "Modulübersteuerung" geschützt werde
 
 \## 2. Globale Parameter
 
-| Parameter                            | Typ/Auswahl                 |
-| ------------------------------------ | --------------------------- |
-| Anlagentyp                           | Sternsieb, Splitter, …      |
-| Ziel-Land                            | Deutschland, Nordamerika, … |
-| Anschlussspannung & Frequenz         | 400 V/50 Hz, 600 V/60 Hz    |
-| # Motoren mit FU & Kabellänge > 50 m | Integer                     |
-| # Bänder mit Seilzugschalter         | Integer                     |
-| # Not-Aus extern                     | Integer                     |
-| Steuerungs‑verknüpfung               | Bool                        |
-| Extra Gehäuse für Bedienpult         | Bool                        |
-| Fernwartung                          | Bool                        |
-| repair_switch                        | intern, extern, nein        |
-| SPS                                  | S7‑1200, S7‑1500            |
-| Touch Panel                          | 7″, 12″, 15″                |
-| Funkfernbedienung                    | Bool                        |
-| # Anlaufwarnung                      | Integer                     |
-| Einzeladerbeschriftung               | Bool                        |
-| Klimagerät                           | Bool                        |
-| Umgebungstemperatur                  | Auswahl (z. B. 25 °C–35 °C) |
-| avg_cable_length                     | Decimal (Meter)             |
-| Montage kalkuliert                   | Bool                        |
-| Verbissichere Kabel                  | Bool                        |
+Aktuell definierte globale Parameter des Systems:
+
+| Parameter          | Typ/Auswahl           | Beschreibung                         |
+| ------------------ | --------------------- | ------------------------------------ |
+| calculation_name   | Text                  | Name der Kalkulation                  |
+| customer           | Text                  | Kunde                                 |
+| customer_id        | Text                  | Kunden-ID                             |
+| input_voltage      | Auswahl (400V, 600V)  | Anschlussspannung                     |
+| frequency          | Decimal (Hz)          | Netzfrequenz                          |
+| avg_cable_length   | Decimal (m)           | Durchschnittliche Kabellänge          |
+| max_voltage_drop   | Decimal (%)           | Maximaler zulässiger Spannungsabfall  |
 
 ---
 
@@ -261,6 +280,31 @@ Einige Globalparameter sollten jedoch vor "Modulübersteuerung" geschützt werde
 
 \* Konfigurierbare Faktortabellen (extern, z. B. JSON/DB)
 
+## Abweichungen zwischen Dokumentation und Code
+
+- Es existieren Prozessmodule (Förderband, Splitter) und ein grundlegendes Schaltschrankmodul; Module für Schalträume sowie eine Füllgradüberwachung der Schaltschränke fehlen noch.
+- Ein Browser-Frontend und Docker-Containerisierung sind aktuell nicht implementiert, obwohl sie als Ziel genannt werden.
+- Die in der Beschreibung erwähnte Wahl der gemeinsamen oder getrennten Aufstellung von Schaltschränken ist derzeit nicht im Code umgesetzt.
+
+## Roadmap
+
+- [x] Moduldefinitionssystem auf Basis von JSON und Python-Logik
+- [x] Globalmodul und Beispiel-Module (Förderband, Splitter) mit Berechnungen
+- [x] Grundlegendes Schaltschrankmodul
+- [ ] Schaltraummodule
+- [ ] Persistenz der Kalkulationen (Datei/DB)
+- [ ] Artikeldaten-Anbindung (SQLite/MSSQL)
+- [ ] Browser-Frontend (z. B. Flask)
+- [ ] Containerisierung (Docker)
+- [ ] Validierung & Plausibilitätschecks
+- [ ] Benutzerrechte & Rollenkonzept
+- [ ] Versionierung der Module
+- [ ] Reporting & Export (PDF/Excel/CSV)
+- [ ] Internationalisierung
+- [ ] API & Integrationen
+- [ ] Performance & Skalierung
+- [ ] UI/UX-Verbesserungen
+
 \---
 
 \## 7. Future Feature Map
@@ -297,7 +341,7 @@ Die folgenden Punkte sind für spätere Entwicklungsphasen geplant und werden ge
 
 &#x20;  \* Caching, Hintergrundspeicherung, Optimierung für große Anlagen
 
-8\. \*\*UI/UX-Verbesserungen (mid)\*\*
+ 8\. \*\*UI/UX-Verbesserungen (mid)\*\*
 
 &#x20;  \* Fortschrittsbalken, Übersichtskarte, Drag-&-Drop für Module
 
@@ -372,4 +416,4 @@ def leftover(rail_mm, reserve_mm, n_mss, n_ls, n_18mm=0, extra_bu=0):
     }
 ```
 
-Damit kannst du jede Schiene konsistent in **BU** (9 mm-Raster) planen, und bei Bedarf sofort in **TE** oder **mm** zurückrechnen.
+

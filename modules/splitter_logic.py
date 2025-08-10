@@ -9,12 +9,17 @@ def calculate(params):
     length = params.get("length", 0) + params.get("avg_cable_length", 0)
     drives = params.get("drive_count", 1)
     common = params.get("common_starter", True)
+    factor = params.get("operating_load_factor", 0.8)
+    total_power = params.get("motor_rated_power", 0) * drives
 
-    def build_components(power_kw, current):
-        return [
+    def build_components(power_kw, current, origin):
+        comps = [
             {"type": "circuit_breaker", "rated_current": round(current, 2)},
             {"type": "frequency_inverter", "rated_current": round(current, 2)},
         ]
+        for c in comps:
+            c["origin"] = origin
+        return comps
 
     provided_cs = params.get("cable_cross_section")
 
@@ -35,7 +40,7 @@ def calculate(params):
                 "motor_rated_current": round(motor_current, 2),
                 "cable_cross_section": cross_section,
                 "voltage_drop_percent": round(drop_pct, 2),
-                "control_cabinet": build_components(power, motor_current),
+                "control_cabinet": build_components(power, motor_current, params.get("id")),
                 "conduit_length": params.get("length", 0),
             }
         )
@@ -61,7 +66,7 @@ def calculate(params):
                     "voltage_drop_percent": round(drop_pct, 2),
                 }
             )
-            components.extend(build_components(power, motor_current))
+            components.extend(build_components(power, motor_current, params.get("id")))
         params.update(
             {
                 "drives": drive_results,
@@ -69,5 +74,11 @@ def calculate(params):
                 "conduit_length": params.get("length", 0),
             }
         )
+    params.update(
+        {
+            "motor_rated_load": round(total_power, 2),
+            "motor_operating_load": round(total_power * factor, 2),
+        }
+    )
     return params
 
