@@ -18,11 +18,11 @@ Ein browserbasiertes Kalkulationstool entwickeln, das die vorhandene Excelbasis 
 
 2\. \*\*Schalt­schrank­module\*\*
 
-&#x20;  \* Sammeln Elemente aller ausgewählten Prozessmodule
+&#x20;  \* Sammeln Elemente aller ausgewählten Prozessmodule mit Herkunfts-ID
 
-&#x20;  \* Berechnen benötigte Schrankgröße
+&#x20;  \* Schlagen Hauptschaltergrößen vor und berechnen Kapazitätsreserven
 
-&#x20;  \* Überwachen Kapazität (inkl. Reserve)
+&#x20;  \* Überwachen Schrankgröße (Konzept für spätere Füllgradkontrolle)
 
 3\. \*\*Schalt­raum­module\*\*
 
@@ -121,10 +121,10 @@ Ein browserbasiertes Kalkulationstool entwickeln, das die vorhandene Excelbasis 
 
 ### Definition des Schaltschrankmoduls
 
-* Das Schaltschrankmodul (`schaltschrank_mod.json`) sammelt zunächst alle schaltschrankrelevanten Positionen in einem virtuellen Schrank.
+* Das Schaltschrankmodul (`schaltschrank_mod.json`) sammelt zunächst alle schaltschrankrelevanten Positionen in einem virtuellen Schrank und listet sie mit Herkunfts-ID auf.
+* Es schlägt auf Basis der Summe aller Motornennströme (× 0,75) automatisch eine Hauptschalterbaugröße aus 63A, 125A, 250A, 400A oder 630A vor und berechnet die Kapazitätsreserve in %.
+* Ab 400A wird automatisch ein separates Einspeisefeld markiert, das den Hauptschalter enthält.
 * Komponenten können anschließend einem realen Gehäuse zugeordnet werden; ein Konzept zur Überwachung der Füllgrade folgt.
-* Bei mehreren Schaltschränken kann zwischen gemeinsamer Aufstellung (gemeinsamer Hauptschalter) und getrennter Aufstellung (separate Hauptschalter) gewählt werden.
-* Das Modul schlägt Hauptschaltergrößen von 63A, 125A, 250A, 400A oder 630A vor. Ab 400A ist ein separates Einspeisefeld erforderlich, das den Hauptschalter enthält.
 
 Beispiel für einen virtuellen Schaltschrank:
 
@@ -139,7 +139,11 @@ runtime = ModuleRuntime(
         "id": "SC1",
         "label": "Virtueller Schrank",
         "virtual_cabinet": True,
-        "main_switch_size": "400A",
+        "elements": [
+            {"type": "contactor", "rated_current": 10, "origin": "H101"},
+            {"type": "frequency_inverter", "rated_current": 12, "origin": "F102"},
+        ],
+        "motor_currents": [10, 12],
     },
 )
 print(runtime.run())
@@ -273,6 +277,7 @@ Aktuell definierte globale Parameter des Systems:
 
 - Es existieren Prozessmodule (Förderband, Splitter) und ein grundlegendes Schaltschrankmodul; Module für Schalträume sowie eine Füllgradüberwachung der Schaltschränke fehlen noch.
 - Ein Browser-Frontend und Docker-Containerisierung sind aktuell nicht implementiert, obwohl sie als Ziel genannt werden.
+- Die in der Beschreibung erwähnte Wahl der gemeinsamen oder getrennten Aufstellung von Schaltschränken ist derzeit nicht im Code umgesetzt.
 
 ## Roadmap
 

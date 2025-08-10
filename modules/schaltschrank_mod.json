@@ -21,23 +21,34 @@
       "source": ["user"],
       "editableInFrontend": true
     },
-    "installation_type": {
-      "datatype": "Auswahl",
-      "defaultValue": "getrennte Aufstellung",
-      "options": ["gemeinsame Aufstellung", "getrennte Aufstellung"],
-      "source": ["user"],
-      "editableInFrontend": true
-    },
     "main_switch_size": {
       "datatype": "Auswahl",
-      "defaultValue": "63A",
+      "defaultValue": null,
       "options": ["63A", "125A", "250A", "400A", "630A"],
-      "source": ["user"],
-      "editableInFrontend": true
+      "source": [],
+      "editableInFrontend": false
+    },
+    "capacity_reserve_percent": {
+      "datatype": "Decimal",
+      "defaultValue": null,
+      "source": [],
+      "editableInFrontend": false
     },
     "needs_supply_field": {
       "datatype": "Bool",
       "defaultValue": false,
+      "source": [],
+      "editableInFrontend": false
+    },
+    "elements": {
+      "datatype": "Liste",
+      "defaultValue": [],
+      "source": [],
+      "editableInFrontend": false
+    },
+    "motor_currents": {
+      "datatype": "Liste",
+      "defaultValue": [],
       "source": [],
       "editableInFrontend": false
     }

@@ -68,9 +68,29 @@ class ProjectRuntime:
 
     def run(self) -> dict:
         results = {"global": self.global_runtime.run(), "modules": []}
+        cabinet_elements = []
+        motor_currents = []
+        sc_module = None
         for module in self.modules:
+            if module.definition.logic == "schaltschrank":
+                sc_module = module
+                continue
             self._apply_globals(module, results["global"])
-            results["modules"].append(module.run())
+            res = module.run()
+            results["modules"].append(res)
+            if "control_cabinet" in res:
+                cabinet_elements.extend(res["control_cabinet"])
+            if "motor_rated_current" in res:
+                motor_currents.append(res["motor_rated_current"])
+            if "drives" in res:
+                for drive in res["drives"]:
+                    if "motor_rated_current" in drive:
+                        motor_currents.append(drive["motor_rated_current"])
+        if sc_module:
+            sc_module.values["elements"] = cabinet_elements
+            sc_module.values["motor_currents"] = motor_currents
+            self._apply_globals(sc_module, results["global"])
+            results["modules"].append(sc_module.run())
         return results
 
 if __name__ == "__main__":
@@ -81,16 +101,6 @@ if __name__ == "__main__":
     sc_def = ModuleDefinition.from_json(base / "schaltschrank_mod.json")
 
     modules = [
-        (
-            sc_def,
-            {
-                "id": "SC1",
-                "label": "Virtueller Schrank",
-                "virtual_cabinet": True,
-                "installation_type": "getrennte Aufstellung",
-                "main_switch_size": "400A",
-            },
-        ),
         (fb_def, {
             "id": "H101",
             "label": "Zuführband",
@@ -131,6 +141,14 @@ if __name__ == "__main__":
             "repair_switch": "integriert",
             "pull_cord": "einseitig",
         }),
+        (
+            sc_def,
+            {
+                "id": "SC1",
+                "label": "Virtueller Schrank",
+                "virtual_cabinet": True,
+            },
+        ),
     ]
 
     project = ProjectRuntime(global_def, modules)
