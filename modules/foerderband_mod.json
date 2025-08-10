@@ -3,19 +3,19 @@
   "moduleId": "FB001",
   "logic": "foerderband",
   "parameters": {
-    "ID": {
+      "id": {
       "datatype": "Text",
       "defaultValue": "",
       "source": ["user"],
       "editableInFrontend": true
     },
-    "Bezeichnung": {
+      "label": {
       "datatype": "Text",
       "defaultValue": "",
       "source": ["user"],
       "editableInFrontend": true
     },
-    "MotorLeistung": {
+      "motor_rated_power": {
       "datatype": "Decimal",
       "defaultValue": 5.5,
       "hardLimits": { "min": 0, "max": 100 },
@@ -23,67 +23,74 @@
       "source": ["user"],
       "editableInFrontend": true
     },
-    "Antriebe": {
+      "drive_count": {
       "datatype": "Integer",
       "defaultValue": 1,
       "source": ["user"],
       "editableInFrontend": true
     },
-    "GemeinsamerStarter": {
+      "common_starter": {
       "datatype": "Bool",
       "defaultValue": false,
       "source": ["user"],
       "editableInFrontend": true
     },
-    "Laenge": {
+      "length": {
       "datatype": "Decimal",
       "defaultValue": 0,
       "source": ["user"],
       "editableInFrontend": true
     },
-    "StartArt": {
+      "start_type": {
       "datatype": "Auswahl",
       "defaultValue": "DOL",
       "options": ["DOL", "FU"],
       "source": ["user"],
       "editableInFrontend": true
     },
-    "Reparaturschalter": {
+      "repair_switch": {
       "datatype": "Auswahl",
       "defaultValue": "integriert",
       "options": ["integriert", "extern"],
       "source": ["user"],
       "editableInFrontend": true
     },
-    "Reissleine": {
+      "pull_cord": {
       "datatype": "Auswahl",
       "defaultValue": "beidseitig",
       "options": ["beidseitig", "links", "rechts", "einseitig", "keine"],
       "source": ["user"],
       "editableInFrontend": true
     },
-    "AvgCableLength": {
-      "datatype": "Decimal",
-      "defaultValue": null,
-      "source": ["global"],
-      "reference": "AVG_KABEL_LAENGE",
-      "editableInFrontend": false
-    },
-    "Netzspannung": {
-      "datatype": "Auswahl",
-      "defaultValue": null,
-      "options": ["400V", "600V"],
-      "source": ["global"],
-      "reference": "EING_NENN_SPANNUNG",
-      "editableInFrontend": false
-    },
-    "MaxSpannungsabfall": {
-      "datatype": "Decimal",
-      "defaultValue": null,
-      "source": ["global"],
-      "reference": "MAX_SPANNUNGSABFALL",
-      "editableInFrontend": false
-    }
+      "avg_cable_length": {
+        "datatype": "Decimal",
+        "defaultValue": null,
+        "source": ["global", "user"],
+        "reference": "avg_cable_length",
+        "editableInFrontend": true
+      },
+      "supply_voltage": {
+        "datatype": "Auswahl",
+        "defaultValue": null,
+        "options": ["400V", "600V"],
+        "source": ["global"],
+        "reference": "input_voltage",
+        "editableInFrontend": false
+      },
+      "frequency": {
+        "datatype": "Decimal",
+        "defaultValue": null,
+        "source": ["global"],
+        "reference": "frequency",
+        "editableInFrontend": false
+      },
+      "max_voltage_drop": {
+        "datatype": "Decimal",
+        "defaultValue": null,
+        "source": ["global"],
+        "reference": "max_voltage_drop",
+        "editableInFrontend": false
+      }
   },
   "steps": ["calculate"]
 }

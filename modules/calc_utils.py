@@ -35,6 +35,8 @@ def calc_current(power_kw, voltage_v, safety_factor=1.01):
     Rückgabe:
         Strom in Ampere (float)
     """
+    if not 0.75 <= power_kw <= 45:
+        raise ValueError("power_kw outside supported range (0.75-45 kW)")
     # Kombinierter Faktor η*cosφ anhand einer logarithmischen Näherung
     eff_cosphi = 0.6557219 + 0.0560407 * math.log(power_kw)
     # Faktor auf realistische Grenzen begrenzen
@@ -44,12 +46,16 @@ def calc_current(power_kw, voltage_v, safety_factor=1.01):
 
 
 def dimension_line(current_a, length_m, voltage_v, max_drop_percent):
-    """Return (cross_section, drop_percent) for a given current."""
+    """Return (cross_section, drop_percent) for a given current.
+
+    Raises ValueError if no suitable cross section is found within the
+    predefined range.
+    """
     for cs in [1.5, 2.5, 4, 6, 10, 16, 25, 35, 50]:
         resistance = 2 * length_m * COPPER_RESISTIVITY / cs
         delta_u = math.sqrt(3) * current_a * resistance
         drop_pct = delta_u / voltage_v * 100
         if drop_pct <= max_drop_percent:
             return cs, drop_pct
-    return cs, drop_pct
+    raise ValueError("requirements exceed available cable sizes")
 

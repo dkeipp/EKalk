@@ -3,19 +3,19 @@
   "moduleId": "SP001",
   "logic": "splitter",
   "parameters": {
-    "ID": {"datatype": "Text", "defaultValue": "", "source": ["user"], "editableInFrontend": true},
-    "Bezeichnung": {"datatype": "Text", "defaultValue": "", "source": ["user"], "editableInFrontend": true},
-    "MotorLeistung": {"datatype": "Decimal", "defaultValue": 5.5, "source": ["user"], "editableInFrontend": true},
-    "Laenge": {"datatype": "Decimal", "defaultValue": 0, "source": ["user"], "editableInFrontend": true},
-    "StartArt": {"datatype": "Auswahl", "defaultValue": "FU", "options": ["FU"], "source": ["user"], "editableInFrontend": true},
-    "Frequenz": {"datatype": "Decimal", "defaultValue": 50, "source": ["user"], "editableInFrontend": true},
-    "Reparaturschalter": {"datatype": "Auswahl", "defaultValue": "extern", "options": ["integriert", "extern"], "source": ["user"], "editableInFrontend": true},
-    "Reissleine": {"datatype": "Auswahl", "defaultValue": "links", "options": ["beidseitig", "links", "rechts", "einseitig", "keine"], "source": ["user"], "editableInFrontend": true},
-    "Antriebe": {"datatype": "Integer", "defaultValue": 1, "source": ["user"], "editableInFrontend": true},
-    "GemeinsamerStarter": {"datatype": "Bool", "defaultValue": true, "source": ["user"], "editableInFrontend": true},
-    "AvgCableLength": {"datatype": "Decimal", "defaultValue": null, "source": ["global"], "reference": "AVG_KABEL_LAENGE", "editableInFrontend": false},
-    "Netzspannung": {"datatype": "Auswahl", "defaultValue": null, "options": ["400V", "600V"], "source": ["global"], "reference": "EING_NENN_SPANNUNG", "editableInFrontend": false},
-    "MaxSpannungsabfall": {"datatype": "Decimal", "defaultValue": null, "source": ["global"], "reference": "MAX_SPANNUNGSABFALL", "editableInFrontend": false}
+      "id": {"datatype": "Text", "defaultValue": "", "source": ["user"], "editableInFrontend": true},
+      "label": {"datatype": "Text", "defaultValue": "", "source": ["user"], "editableInFrontend": true},
+      "motor_rated_power": {"datatype": "Decimal", "defaultValue": 5.5, "source": ["user"], "editableInFrontend": true},
+      "length": {"datatype": "Decimal", "defaultValue": 0, "source": ["user"], "editableInFrontend": true},
+      "start_type": {"datatype": "Auswahl", "defaultValue": "FU", "options": ["FU"], "source": ["user"], "editableInFrontend": true},
+      "frequency": {"datatype": "Decimal", "defaultValue": 50, "source": ["user"], "editableInFrontend": true},
+      "repair_switch": {"datatype": "Auswahl", "defaultValue": "extern", "options": ["integriert", "extern"], "source": ["user"], "editableInFrontend": true},
+      "pull_cord": {"datatype": "Auswahl", "defaultValue": "links", "options": ["beidseitig", "links", "rechts", "einseitig", "keine"], "source": ["user"], "editableInFrontend": true},
+      "drive_count": {"datatype": "Integer", "defaultValue": 1, "source": ["user"], "editableInFrontend": true},
+      "common_starter": {"datatype": "Bool", "defaultValue": true, "source": ["user"], "editableInFrontend": true},
+      "avg_cable_length": {"datatype": "Decimal", "defaultValue": null, "source": ["global", "user"], "reference": "avg_cable_length", "editableInFrontend": true},
+      "supply_voltage": {"datatype": "Auswahl", "defaultValue": null, "options": ["400V", "600V"], "source": ["global"], "reference": "input_voltage", "editableInFrontend": false},
+      "max_voltage_drop": {"datatype": "Decimal", "defaultValue": null, "source": ["global"], "reference": "max_voltage_drop", "editableInFrontend": false}
   },
   "steps": ["calculate"]
 }
