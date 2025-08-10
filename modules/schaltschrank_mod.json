@@ -1,0 +1,46 @@
+{
+  "moduleName": "Schaltschrank",
+  "moduleId": "SC001",
+  "logic": "schaltschrank",
+  "parameters": {
+    "id": {
+      "datatype": "Text",
+      "defaultValue": "",
+      "source": ["user"],
+      "editableInFrontend": true
+    },
+    "label": {
+      "datatype": "Text",
+      "defaultValue": "",
+      "source": ["user"],
+      "editableInFrontend": true
+    },
+    "virtual_cabinet": {
+      "datatype": "Bool",
+      "defaultValue": true,
+      "source": ["user"],
+      "editableInFrontend": true
+    },
+    "installation_type": {
+      "datatype": "Auswahl",
+      "defaultValue": "getrennte Aufstellung",
+      "options": ["gemeinsame Aufstellung", "getrennte Aufstellung"],
+      "source": ["user"],
+      "editableInFrontend": true
+    },
+    "main_switch_size": {
+      "datatype": "Auswahl",
+      "defaultValue": "63A",
+      "options": ["63A", "125A", "250A", "400A", "630A"],
+      "source": ["user"],
+      "editableInFrontend": true
+    },
+    "needs_supply_field": {
+      "datatype": "Bool",
+      "defaultValue": false,
+      "source": [],
+      "editableInFrontend": false
+    }
+  },
+  "steps": ["calculate"]
+}
