@@ -1,5 +1,5 @@
 import math
-from .calc_utils import dimension_line, POWER_FACTOR
+from .calc_utils import calc_current, dimension_line
 
 
 def calculate(params):
@@ -12,22 +12,21 @@ def calculate(params):
 
     def build_components(power_kw, current):
         return [
-            {"Typ": "Leitungsschutz", "Leistungsklasse": f"{power_kw} kW", "Nennstrom": round(current, 2)},
-            {"Typ": "Frequenzumrichter", "Leistungsklasse": f"{power_kw} kW", "Nennstrom": round(current, 2)},
+            {"Typ": "Leitungsschutz", "Nennstrom": round(current, 2)},
+            {"Typ": "Frequenzumrichter", "Nennstrom": round(current, 2)},
         ]
 
     if common or drives == 1:
         power = params.get("MotorLeistung", 0) * drives if common else params.get("MotorLeistung", 0)
-        motor_current = power * 1000 / (math.sqrt(3) * motor_voltage * POWER_FACTOR)
-        current, cross_section, drop_pct = dimension_line(
-            power, length, motor_voltage, params.get("MaxSpannungsabfall", 0)
+        motor_current = calc_current(power, motor_voltage)
+        cross_section, drop_pct = dimension_line(
+            motor_current, length, motor_voltage, params.get("MaxSpannungsabfall", 0)
         )
         params.update(
             {
                 "LeistungskabelLaenge": length,
                 "MotorSpannung": round(motor_voltage, 2),
-                "Motorstrom": round(motor_current, 2),
-                "Nennstrom": round(current, 2),
+                "Motornennstrom": round(motor_current, 2),
                 "LeitungQuerschnitt": cross_section,
                 "SpannungsabfallProzent": round(drop_pct, 2),
                 "Schaltschrank": build_components(power, motor_current),
@@ -38,17 +37,16 @@ def calculate(params):
         drive_results = []
         components = []
         power = params.get("MotorLeistung", 0)
-        motor_current = power * 1000 / (math.sqrt(3) * motor_voltage * POWER_FACTOR)
+        motor_current = calc_current(power, motor_voltage)
         for _ in range(drives):
-            current, cross_section, drop_pct = dimension_line(
-                power, length, motor_voltage, params.get("MaxSpannungsabfall", 0)
+            cross_section, drop_pct = dimension_line(
+                motor_current, length, motor_voltage, params.get("MaxSpannungsabfall", 0)
             )
             drive_results.append(
                 {
                     "LeistungskabelLaenge": length,
                     "MotorSpannung": round(motor_voltage, 2),
-                    "Motorstrom": round(motor_current, 2),
-                    "Nennstrom": round(current, 2),
+                    "Motornennstrom": round(motor_current, 2),
                     "LeitungQuerschnitt": cross_section,
                     "SpannungsabfallProzent": round(drop_pct, 2),
                 }
