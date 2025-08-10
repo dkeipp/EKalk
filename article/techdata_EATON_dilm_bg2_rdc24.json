@@ -5,7 +5,8 @@
     "article_no": "199268",
     "current_A_AC3_400V": 8,
     "power_kW_AC3_400V": 3.0,
-    "control_voltage": "24 V DC (RDC24)"
+    "control_voltage": "24 V DC (RDC24)",
+    "bu": 5
   },
   {
     "manufacturer": "Eaton",
@@ -13,7 +14,8 @@
     "article_no": "199273",
     "current_A_AC3_400V": 11,
     "power_kW_AC3_400V": 4.0,
-    "control_voltage": "24 V DC (RDC24)"
+    "control_voltage": "24 V DC (RDC24)",
+    "bu": 5
   },
   {
     "manufacturer": "Eaton",
@@ -21,7 +23,8 @@
     "article_no": "199278",
     "current_A_AC3_400V": 14,
     "power_kW_AC3_400V": 5.5,
-    "control_voltage": "24 V DC (RDC24)"
+    "control_voltage": "24 V DC (RDC24)",
+    "bu": 5
   },
   {
     "manufacturer": "Eaton",
@@ -29,7 +32,8 @@
     "article_no": "199283",
     "current_A_AC3_400V": 17,
     "power_kW_AC3_400V": 7.5,
-    "control_voltage": "24 V DC (RDC24)"
+    "control_voltage": "24 V DC (RDC24)",
+    "bu": 5
   },
   {
     "manufacturer": "Eaton",
@@ -37,7 +41,8 @@
     "article_no": "199288",
     "current_A_AC3_400V": 25,
     "power_kW_AC3_400V": 11.0,
-    "control_voltage": "24 V DC (RDC24)"
+    "control_voltage": "24 V DC (RDC24)",
+    "bu": 5
   },
   {
     "manufacturer": "Eaton",
@@ -45,7 +50,8 @@
     "article_no": "199293",
     "current_A_AC3_400V": 32,
     "power_kW_AC3_400V": 15.0,
-    "control_voltage": "24 V DC (RDC24)"
+    "control_voltage": "24 V DC (RDC24)",
+    "bu": 5
   },
   {
     "manufacturer": "Eaton",
@@ -53,6 +59,7 @@
     "article_no": "199298",
     "current_A_AC3_400V": 38,
     "power_kW_AC3_400V": 18.5,
-    "control_voltage": "24 V DC (RDC24)"
+    "control_voltage": "24 V DC (RDC24)",
+    "bu": 5
   }
 ]

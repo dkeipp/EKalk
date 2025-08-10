@@ -344,3 +344,76 @@ Die folgenden Punkte sind für spätere Entwicklungsphasen geplant und werden ge
  8\. \*\*UI/UX-Verbesserungen (mid)\*\*
 
 &#x20;  \* Fortschrittsbalken, Übersichtskarte, Drag-&-Drop für Module
+
+&#x20;    on
+
+\* Containerisiert (Docker)
+
+\* Python-basiert (z. B. Flask)
+
+\* Modularer Aufbau (JSON-Definitionen)
+
+\* Browser-Frontend (responsive)
+
+\* Konfigurierbare Faktortabellen (extern, z. B. JSON/DB)
+
+
+---
+Weitere ideen:
+
+**Teilungseinheiten-System** 
+
+$\gcd(45\,\text{mm}, 54\,\text{mm}) = \mathbf{9\,mm}$.
+
+Damit ist alles schön ganzzahlig:
+
+* Basis-Einheit (BU): **9 mm**
+* 1 TE (DIN): **18 mm = 2 BU**
+* Motorschutzschalter 45 mm: **5 BU = 2,5 TE**
+* Leitungsschutzschalter 54 mm: **6 BU = 3 TE**
+
+# So rechnest du den Platz auf der Hutschiene
+
+1. **Nutzbreite** bestimmen: $W_\text{nutz} = W_\text{Schiene} - \text{Reserven (Endklemmen, Randleerraum, Trenner, Verdrahtung)}$.
+2. **In BU umrechnen:** $N_\text{BU} = \left\lfloor \dfrac{W_\text{nutz}}{9} \right\rfloor$.
+3. **Verbrauch in BU addieren:**
+   $ \text{BU}_\text{gesamt} = 5\cdot n_\text{MSS} + 6\cdot n_\text{LS} + 2\cdot n_{18\text{mm-Module}} + \text{Abstände\_in\_BU}$.
+4. **Restplatz:** $ \text{BU}_\text{frei} = N_\text{BU} - \text{BU}_\text{gesamt}$.
+   Zurück in mm: $ \text{mm}_\text{frei} = 9 \cdot \text{BU}_\text{frei}$.
+   In TE: $ \text{TE}_\text{frei} = \text{BU}_\text{frei}/2$.
+
+# Mini-Tabelle (BU/TE)
+
+| Gerät / Maß            | mm | BU |  TE |
+| ---------------------- | -: | -: | --: |
+| Standard-Modul         | 18 |  2 | 1.0 |
+| Motorschutzschalter    | 45 |  5 | 2.5 |
+| Leitungsschutzschalter | 54 |  6 | 3.0 |
+| Trenner 9 mm           |  9 |  1 | 0.5 |
+
+# Schneller Python-Helper (optional)
+
+```python
+import math
+
+BU_MM = 9  # Basis-Einheit in mm (gcd von 45 und 54)
+TE_MM = 18
+
+def rail_capacity_mm_to_bu(rail_mm, reserve_mm=0):
+    return (rail_mm - reserve_mm) // BU_MM
+
+def bu_needed(n_mss=0, n_ls=0, n_18mm=0, extra_bu=0):
+    return 5*n_mss + 6*n_ls + 2*n_18mm + extra_bu
+
+def leftover(rail_mm, reserve_mm, n_mss, n_ls, n_18mm=0, extra_bu=0):
+    cap_bu = rail_capacity_mm_to_bu(rail_mm, reserve_mm)
+    need_bu = bu_needed(n_mss, n_ls, n_18mm, extra_bu)
+    free_bu = int(cap_bu - need_bu)
+    return {
+        "free_bu": free_bu,
+        "free_mm": free_bu * BU_MM,
+        "free_te": free_bu / 2
+    }
+```
+
+
