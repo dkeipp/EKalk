@@ -78,8 +78,19 @@ if __name__ == "__main__":
     global_def = ModuleDefinition.from_json(base / "global_mod.json")
     fb_def = ModuleDefinition.from_json(base / "foerderband_mod.json")
     sp_def = ModuleDefinition.from_json(base / "splitter_mod.json")
+    sc_def = ModuleDefinition.from_json(base / "schaltschrank_mod.json")
 
     modules = [
+        (
+            sc_def,
+            {
+                "id": "SC1",
+                "label": "Virtueller Schrank",
+                "virtual_cabinet": True,
+                "installation_type": "getrennte Aufstellung",
+                "main_switch_size": "400A",
+            },
+        ),
         (fb_def, {
             "id": "H101",
             "label": "Zuführband",

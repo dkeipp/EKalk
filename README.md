@@ -126,6 +126,25 @@ Ein browserbasiertes Kalkulationstool entwickeln, das die vorhandene Excelbasis 
 * Bei mehreren Schaltschränken kann zwischen gemeinsamer Aufstellung (gemeinsamer Hauptschalter) und getrennter Aufstellung (separate Hauptschalter) gewählt werden.
 * Das Modul schlägt Hauptschaltergrößen von 63A, 125A, 250A, 400A oder 630A vor. Ab 400A ist ein separates Einspeisefeld erforderlich, das den Hauptschalter enthält.
 
+Beispiel für einen virtuellen Schaltschrank:
+
+```python
+from pathlib import Path
+from module_system import ModuleDefinition, ModuleRuntime
+
+sc_def = ModuleDefinition.from_json(Path("modules/schaltschrank_mod.json"))
+runtime = ModuleRuntime(
+    sc_def,
+    {
+        "id": "SC1",
+        "label": "Virtueller Schrank",
+        "virtual_cabinet": True,
+        "main_switch_size": "400A",
+    },
+)
+print(runtime.run())
+```
+
 ### Cross-Modul Referenzen
 
 * **Modul-Metadaten:**
