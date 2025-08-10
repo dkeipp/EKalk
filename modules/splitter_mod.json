@@ -13,6 +13,7 @@
       "pull_cord": {"datatype": "Auswahl", "defaultValue": "links", "options": ["beidseitig", "links", "rechts", "einseitig", "keine"], "source": ["user"], "editableInFrontend": true},
       "drive_count": {"datatype": "Integer", "defaultValue": 1, "source": ["user"], "editableInFrontend": true},
       "common_starter": {"datatype": "Bool", "defaultValue": true, "source": ["user"], "editableInFrontend": true},
+      "operating_load_factor": {"datatype": "Decimal", "defaultValue": 0.8, "source": ["user"], "editableInFrontend": true},
       "cable_cross_section": {"datatype": "Decimal", "defaultValue": null, "source": ["user"], "editableInFrontend": true},
       "avg_cable_length": {"datatype": "Decimal", "defaultValue": null, "source": ["global", "user"], "reference": "avg_cable_length", "editableInFrontend": true},
       "supply_voltage": {"datatype": "Auswahl", "defaultValue": null, "options": ["400V", "600V"], "source": ["global"], "reference": "input_voltage", "editableInFrontend": false},

@@ -40,18 +40,42 @@
       "source": [],
       "editableInFrontend": false
     },
-    "elements": {
-      "datatype": "Liste",
-      "defaultValue": [],
-      "source": [],
-      "editableInFrontend": false
-    },
-    "motor_currents": {
-      "datatype": "Liste",
-      "defaultValue": [],
-      "source": [],
-      "editableInFrontend": false
-    }
+      "elements": {
+        "datatype": "Objekt",
+        "defaultValue": {},
+        "source": [],
+        "editableInFrontend": false
+      },
+      "motor_currents": {
+        "datatype": "Liste",
+        "defaultValue": [],
+        "source": [],
+        "editableInFrontend": false
+      },
+      "motor_rated_loads": {
+        "datatype": "Liste",
+        "defaultValue": [],
+        "source": [],
+        "editableInFrontend": false
+      },
+      "motor_operating_loads": {
+        "datatype": "Liste",
+        "defaultValue": [],
+        "source": [],
+        "editableInFrontend": false
+      },
+      "total_motor_rated_load": {
+        "datatype": "Decimal",
+        "defaultValue": 0,
+        "source": [],
+        "editableInFrontend": false
+      },
+      "total_motor_operating_load": {
+        "datatype": "Decimal",
+        "defaultValue": 0,
+        "source": [],
+        "editableInFrontend": false
+      }
   },
   "steps": ["calculate"]
 }

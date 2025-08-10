@@ -16,11 +16,15 @@ Ein browserbasiertes Kalkulationstool entwickeln, das die vorhandene Excelbasis 
 
 &#x20;  \* Ermitteln das notwendige Material pro Modul (Schaltschrank- und Baustellenbedarf)
 
+&#x20;  \* Besitzen den Eingabeparameter `operating_load_factor` (Standard 0,8) und liefern daraus den Ausgabeparameter `motor_operating_load`
+
 2\. \*\*Schalt­schrank­module\*\*
 
-&#x20;  \* Sammeln Elemente aller ausgewählten Prozessmodule mit Herkunfts-ID
+&#x20;  \* Sammeln Elemente aller ausgewählten Prozessmodule gruppiert nach Herkunfts-ID
 
 &#x20;  \* Schlagen Hauptschaltergrößen vor und berechnen Kapazitätsreserven
+
+&#x20;  \* Summieren `motor_rated_load` und `motor_operating_load` aller Module
 
 &#x20;  \* Überwachen Schrankgröße (Konzept für spätere Füllgradkontrolle)
 
@@ -121,8 +125,9 @@ Ein browserbasiertes Kalkulationstool entwickeln, das die vorhandene Excelbasis 
 
 ### Definition des Schaltschrankmoduls
 
-* Das Schaltschrankmodul (`schaltschrank_mod.json`) sammelt zunächst alle schaltschrankrelevanten Positionen in einem virtuellen Schrank und listet sie mit Herkunfts-ID auf.
+* Das Schaltschrankmodul (`schaltschrank_mod.json`) sammelt zunächst alle schaltschrankrelevanten Positionen in einem virtuellen Schrank und gruppiert sie nach Herkunfts-ID.
 * Es schlägt auf Basis der Summe aller Motornennströme (× 0,75) automatisch eine Hauptschalterbaugröße aus 63A, 125A, 250A, 400A oder 630A vor und berechnet die Kapazitätsreserve in %.
+* Zusätzlich summiert es `motor_rated_load` und `motor_operating_load` aller Module und stellt diese Gesamtwerte bereit.
 * Ab 400A wird automatisch ein separates Einspeisefeld markiert, das den Hauptschalter enthält.
 * Komponenten können anschließend einem realen Gehäuse zugeordnet werden; ein Konzept zur Überwachung der Füllgrade folgt.
 
@@ -139,11 +144,13 @@ runtime = ModuleRuntime(
         "id": "SC1",
         "label": "Virtueller Schrank",
         "virtual_cabinet": True,
-        "elements": [
-            {"type": "contactor", "rated_current": 10, "origin": "H101"},
-            {"type": "frequency_inverter", "rated_current": 12, "origin": "F102"},
-        ],
+        "elements": {
+            "H101": [{"type": "contactor", "rated_current": 10}],
+            "F102": [{"type": "frequency_inverter", "rated_current": 12}]
+        },
         "motor_currents": [10, 12],
+        "motor_rated_loads": [5.5, 5.5],
+        "motor_operating_loads": [4.4, 4.4],
     },
 )
 print(runtime.run())

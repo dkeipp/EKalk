@@ -68,8 +68,10 @@ class ProjectRuntime:
 
     def run(self) -> dict:
         results = {"global": self.global_runtime.run(), "modules": []}
-        cabinet_elements = []
+        cabinet_elements: dict[str, list] = {}
         motor_currents = []
+        motor_rated_loads = []
+        motor_operating_loads = []
         sc_module = None
         for module in self.modules:
             if module.definition.logic == "schaltschrank":
@@ -79,16 +81,26 @@ class ProjectRuntime:
             res = module.run()
             results["modules"].append(res)
             if "control_cabinet" in res:
-                cabinet_elements.extend(res["control_cabinet"])
+                for elem in res["control_cabinet"]:
+                    origin = elem.get("origin")
+                    item = dict(elem)
+                    item.pop("origin", None)
+                    cabinet_elements.setdefault(origin, []).append(item)
             if "motor_rated_current" in res:
                 motor_currents.append(res["motor_rated_current"])
             if "drives" in res:
                 for drive in res["drives"]:
                     if "motor_rated_current" in drive:
                         motor_currents.append(drive["motor_rated_current"])
+            if "motor_rated_load" in res:
+                motor_rated_loads.append(res["motor_rated_load"])
+            if "motor_operating_load" in res:
+                motor_operating_loads.append(res["motor_operating_load"])
         if sc_module:
             sc_module.values["elements"] = cabinet_elements
             sc_module.values["motor_currents"] = motor_currents
+            sc_module.values["motor_rated_loads"] = motor_rated_loads
+            sc_module.values["motor_operating_loads"] = motor_operating_loads
             self._apply_globals(sc_module, results["global"])
             results["modules"].append(sc_module.run())
         return results

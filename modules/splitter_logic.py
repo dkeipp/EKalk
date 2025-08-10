@@ -9,6 +9,8 @@ def calculate(params):
     length = params.get("length", 0) + params.get("avg_cable_length", 0)
     drives = params.get("drive_count", 1)
     common = params.get("common_starter", True)
+    factor = params.get("operating_load_factor", 0.8)
+    total_power = params.get("motor_rated_power", 0) * drives
 
     def build_components(power_kw, current, origin):
         comps = [
@@ -72,5 +74,11 @@ def calculate(params):
                 "conduit_length": params.get("length", 0),
             }
         )
+    params.update(
+        {
+            "motor_rated_load": round(total_power, 2),
+            "motor_operating_load": round(total_power * factor, 2),
+        }
+    )
     return params
 

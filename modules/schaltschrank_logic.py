@@ -11,4 +11,10 @@ def calculate(params):
     else:
         reserve = 0
     params["capacity_reserve_percent"] = round(reserve, 2)
+    params["total_motor_rated_load"] = round(
+        sum(params.get("motor_rated_loads", [])), 2
+    )
+    params["total_motor_operating_load"] = round(
+        sum(params.get("motor_operating_loads", [])), 2
+    )
     return params
