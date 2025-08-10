@@ -59,3 +59,17 @@ def dimension_line(current_a, length_m, voltage_v, max_drop_percent):
             return cs, drop_pct
     raise ValueError("requirements exceed available cable sizes")
 
+
+def calc_voltage_drop(current_a, length_m, voltage_v, cross_section):
+    """Return voltage drop percentage for a given cross section.
+
+    Raises ValueError if the cross section is not one of the supported
+    standard sizes.
+    """
+    valid = [1.5, 2.5, 4, 6, 10, 16, 25, 35, 50]
+    if cross_section not in valid:
+        raise ValueError("cross_section outside supported sizes")
+    resistance = 2 * length_m * COPPER_RESISTIVITY / cross_section
+    delta_u = math.sqrt(3) * current_a * resistance
+    return delta_u / voltage_v * 100
+

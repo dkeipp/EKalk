@@ -1,5 +1,5 @@
 import math
-from .calc_utils import calc_current, dimension_line
+from .calc_utils import calc_current, dimension_line, calc_voltage_drop
 
 
 def calculate(params):
@@ -16,12 +16,18 @@ def calculate(params):
             {"type": "frequency_inverter", "rated_current": round(current, 2)},
         ]
 
+    provided_cs = params.get("cable_cross_section")
+
     if common or drives == 1:
         power = params.get("motor_rated_power", 0) * drives if common else params.get("motor_rated_power", 0)
         motor_current = calc_current(power, motor_voltage)
-        cross_section, drop_pct = dimension_line(
-            motor_current, length, motor_voltage, params.get("max_voltage_drop", 0)
-        )
+        if provided_cs is not None:
+            drop_pct = calc_voltage_drop(motor_current, length, motor_voltage, provided_cs)
+            cross_section = provided_cs
+        else:
+            cross_section, drop_pct = dimension_line(
+                motor_current, length, motor_voltage, params.get("max_voltage_drop", 0)
+            )
         params.update(
             {
                 "power_cable_length": length,
@@ -39,9 +45,13 @@ def calculate(params):
         power = params.get("motor_rated_power", 0)
         motor_current = calc_current(power, motor_voltage)
         for _ in range(drives):
-            cross_section, drop_pct = dimension_line(
-                motor_current, length, motor_voltage, params.get("max_voltage_drop", 0)
-            )
+            if provided_cs is not None:
+                drop_pct = calc_voltage_drop(motor_current, length, motor_voltage, provided_cs)
+                cross_section = provided_cs
+            else:
+                cross_section, drop_pct = dimension_line(
+                    motor_current, length, motor_voltage, params.get("max_voltage_drop", 0)
+                )
             drive_results.append(
                 {
                     "power_cable_length": length,

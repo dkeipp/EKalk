@@ -62,6 +62,12 @@
       "source": ["user"],
       "editableInFrontend": true
     },
+      "cable_cross_section": {
+        "datatype": "Decimal",
+        "defaultValue": null,
+        "source": ["user"],
+        "editableInFrontend": true
+      },
       "avg_cable_length": {
         "datatype": "Decimal",
         "defaultValue": null,

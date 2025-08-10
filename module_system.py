@@ -99,6 +99,7 @@ if __name__ == "__main__":
             "repair_switch": "extern",
             "pull_cord": "links",
             "drive_count": 3,
+            "cable_cross_section": 16,
         }),
         (fb_def, {
             "id": "H103",
