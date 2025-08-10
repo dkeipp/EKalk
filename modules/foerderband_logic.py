@@ -1,68 +1,78 @@
 import math
-from .calc_utils import calc_current, dimension_line
+from .calc_utils import calc_current, dimension_line, calc_voltage_drop
 
 
 def calculate(params):
-    voltage = int(str(params.get("Netzspannung", "0V")).rstrip("V"))
-    freq = params.get("Frequenz")
-    motor_voltage = voltage / math.sqrt(3) if params.get("StartArt") == "FU" and freq == 87 else voltage
-    length = params.get("Laenge", 0) + params.get("AvgCableLength", 0)
-    drives = params.get("Antriebe", 1)
-    common = params.get("GemeinsamerStarter", False)
+    voltage = int(str(params.get("supply_voltage", "0V")).rstrip("V"))
+    freq = params.get("frequency")
+    motor_voltage = voltage / math.sqrt(3) if params.get("start_type") == "FU" and freq == 87 else voltage
+    length = params.get("length", 0) + params.get("avg_cable_length", 0)
+    drives = params.get("drive_count", 1)
+    common = params.get("common_starter", False)
 
     def build_components(power_kw, current):
-        if params.get("StartArt") == "DOL":
+        if params.get("start_type") == "DOL":
             return [
-                {"Typ": "Motorschutz", "Leistungsklasse": f"{power_kw} kW", "Nennstrom": round(current, 2), "Class": "10A"},
-                {"Typ": "Schütz", "Leistungsklasse": f"{power_kw} kW", "Nennstrom": round(current, 2)},
+                {"type": "motor_protection", "power_class": f"{power_kw} kW", "rated_current": round(current, 2), "class": "10A"},
+                {"type": "contactor", "power_class": f"{power_kw} kW", "rated_current": round(current, 2)},
             ]
         else:
             return [
-                {"Typ": "Leitungsschutz", "Nennstrom": round(current, 2)},
-                {"Typ": "Frequenzumrichter", "Nennstrom": round(current, 2)},
+                {"type": "circuit_breaker", "rated_current": round(current, 2)},
+                {"type": "frequency_inverter", "rated_current": round(current, 2)},
             ]
 
+    provided_cs = params.get("cable_cross_section")
+
     if common or drives == 1:
-        power = params.get("MotorLeistung", 0) * drives if common else params.get("MotorLeistung", 0)
+        power = params.get("motor_rated_power", 0) * drives if common else params.get("motor_rated_power", 0)
         motor_current = calc_current(power, motor_voltage)
-        cross_section, drop_pct = dimension_line(
-            motor_current, length, motor_voltage, params.get("MaxSpannungsabfall", 0)
-        )
+        if provided_cs is not None:
+            drop_pct = calc_voltage_drop(motor_current, length, motor_voltage, provided_cs)
+            cross_section = provided_cs
+        else:
+            cross_section, drop_pct = dimension_line(
+                motor_current, length, motor_voltage, params.get("max_voltage_drop", 0)
+            )
         params.update(
             {
-                "LeistungskabelLaenge": length,
-                "MotorSpannung": round(motor_voltage, 2),
-                "Motornennstrom": round(motor_current, 2),
-                "LeitungQuerschnitt": cross_section,
-                "SpannungsabfallProzent": round(drop_pct, 2),
-                "Schaltschrank": build_components(power, motor_current),
-                "KabelrohrLaenge": params.get("Laenge", 0),
+                "power_cable_length": length,
+                "motor_voltage": round(motor_voltage, 2),
+                "motor_rated_current": round(motor_current, 2),
+                "cable_cross_section": cross_section,
+                "voltage_drop_percent": round(drop_pct, 2),
+                "control_cabinet": build_components(power, motor_current),
+                "conduit_length": params.get("length", 0),
             }
         )
     else:
         drive_results = []
         components = []
-        power = params.get("MotorLeistung", 0)
+        power = params.get("motor_rated_power", 0)
         motor_current = calc_current(power, motor_voltage)
         for _ in range(drives):
-            cross_section, drop_pct = dimension_line(
-                motor_current, length, motor_voltage, params.get("MaxSpannungsabfall", 0)
-            )
+            if provided_cs is not None:
+                drop_pct = calc_voltage_drop(motor_current, length, motor_voltage, provided_cs)
+                cross_section = provided_cs
+            else:
+                cross_section, drop_pct = dimension_line(
+                    motor_current, length, motor_voltage, params.get("max_voltage_drop", 0)
+                )
             drive_results.append(
                 {
-                    "LeistungskabelLaenge": length,
-                    "MotorSpannung": round(motor_voltage, 2),
-                    "Motornennstrom": round(motor_current, 2),
-                    "LeitungQuerschnitt": cross_section,
-                    "SpannungsabfallProzent": round(drop_pct, 2),
+                    "power_cable_length": length,
+                    "motor_voltage": round(motor_voltage, 2),
+                    "motor_rated_current": round(motor_current, 2),
+                    "cable_cross_section": cross_section,
+                    "voltage_drop_percent": round(drop_pct, 2),
                 }
             )
             components.extend(build_components(power, motor_current))
         params.update(
             {
-                "Triebe": drive_results,
-                "Schaltschrank": components,
-                "KabelrohrLaenge": params.get("Laenge", 0),
+                "drives": drive_results,
+                "control_cabinet": components,
+                "conduit_length": params.get("length", 0),
             }
         )
     return params

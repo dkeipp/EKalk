@@ -49,7 +49,7 @@ Ein browserbasiertes Kalkulationstool entwickeln, das die vorhandene Excelbasis 
       "options": ["OptionA", "OptionB", ...],
       "source": ["global", "user", "reference"],
       "editableInFrontend": true,
-      "reference": "EING_NENN_SPANNUNG"
+        "reference": "input_voltage"
     }
   }
   ```
@@ -103,15 +103,15 @@ Ein browserbasiertes Kalkulationstool entwickeln, das die vorhandene Excelbasis 
 
   ```json
   {
-    "globalParameters": {
-      "EING_NENN_SPANNUNG": {
-        "datatype": "Auswahl",
-        "options": ["400V", "600V"],
-        "defaultValue": "400V",
-        "hardLimits": null,
-        "softLimits": null,
-        "editableInFrontend": false
-      },
+      "globalParameters": {
+        "input_voltage": {
+          "datatype": "Auswahl",
+          "options": ["400V", "600V"],
+          "defaultValue": "400V",
+          "hardLimits": null,
+          "softLimits": null,
+          "editableInFrontend": false
+        },
       "EING_TEMP": {
         "datatype": "Auswahl",
         "options": ["25°C", "30°C", "35°C"],
@@ -144,12 +144,12 @@ Ein browserbasiertes Kalkulationstool entwickeln, das die vorhandene Excelbasis 
   * Module untereinander: über `<moduleId>.<parameterName>`, z. B.:
 
     ```json
-    "reference": "FB001.MotorLeistung"
+    "reference": "FB001.motor_rated_power"
     ```
   * Globalmodul: über `global.<parameterName>`, z. B.:
 
     ```json
-    "reference": "global.EING_NENN_SPANNUNG"
+    "reference": "global.input_voltage"
     ```
 * **Lookup-Tabelle:**
 
@@ -170,9 +170,9 @@ Ein browserbasiertes Kalkulationstool entwickeln, das die vorhandene Excelbasis 
 4\. Ergebnis: Mengengerüst, Materialliste, Zeitaufwand
 
 a = Module können sich den Parametern aus den Globaldaten bedienen oder diese ggf. überschreiben
-Beispiel Reparaturschalter: Global gesetzt auf "intern" kann im Modul per Benutzerauswahl trotzdem auf Nein oder extern gestellt werden.
-Ebenso verhält es sich bei der Kabellänge: Wird vom Benutzer keine definiert, gilt der durchschnittswert aus den Globaldaten.
-Einige Globalparameter sollten aber vor "Modulübersteuerung" geschützt werden, wie z.B. die Nennspannung und Frequenz, hier ist kein Überschreiben möglich.
+Beispiel *repair_switch*: Global gesetzt auf "intern" kann im Modul per Benutzerauswahl trotzdem auf Nein oder extern gestellt werden.
+Ebenso verhält es sich bei der *avg_cable_length*: Wird vom Benutzer keine definiert, gilt der Durchschnittswert aus den Globaldaten.
+Einige Globalparameter sollten jedoch vor "Modulübersteuerung" geschützt werden, wie z.B. die *input_voltage* und *frequency* – hier ist kein Überschreiben möglich.
 
 
 **Eingabeparameter**
@@ -213,7 +213,7 @@ Einige Globalparameter sollten aber vor "Modulübersteuerung" geschützt werden,
 | Steuerungs‑verknüpfung               | Bool                        |
 | Extra Gehäuse für Bedienpult         | Bool                        |
 | Fernwartung                          | Bool                        |
-| Reparaturschalter                    | intern, extern, nein        |
+| repair_switch                        | intern, extern, nein        |
 | SPS                                  | S7‑1200, S7‑1500            |
 | Touch Panel                          | 7″, 12″, 15″                |
 | Funkfernbedienung                    | Bool                        |
@@ -221,7 +221,7 @@ Einige Globalparameter sollten aber vor "Modulübersteuerung" geschützt werden,
 | Einzeladerbeschriftung               | Bool                        |
 | Klimagerät                           | Bool                        |
 | Umgebungstemperatur                  | Auswahl (z. B. 25 °C–35 °C) |
-| Durchschnittliche Kabellänge         | Decimal (Meter)             |
+| avg_cable_length                     | Decimal (Meter)             |
 | Montage kalkuliert                   | Bool                        |
 | Verbissichere Kabel                  | Bool                        |
 

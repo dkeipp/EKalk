@@ -63,7 +63,8 @@ class ProjectRuntime:
     def _apply_globals(self, module: ModuleRuntime, global_values: dict):
         for name, param in module.definition.parameters.items():
             if "global" in param.source and param.reference:
-                module.values[name] = global_values.get(param.reference)
+                if module.values.get(name) is None:
+                    module.values[name] = global_values.get(param.reference)
 
     def run(self) -> dict:
         results = {"global": self.global_runtime.run(), "modules": []}
@@ -80,42 +81,44 @@ if __name__ == "__main__":
 
     modules = [
         (fb_def, {
-            "ID": "H101",
-            "Bezeichnung": "Zuführband",
-            "Laenge": 6,
-            "MotorLeistung": 5.5,
-            "StartArt": "DOL",
-            "Reparaturschalter": "integriert",
-            "Reissleine": "beidseitig",
+            "id": "H101",
+            "label": "Zuführband",
+            "length": 6,
+            "motor_rated_power": 5.5,
+            "start_type": "DOL",
+            "repair_switch": "integriert",
+            "pull_cord": "beidseitig",
         }),
         (sp_def, {
-            "ID": "F102",
-            "Bezeichnung": "Splitter",
-            "Laenge": 5,
-            "MotorLeistung": 5.5,
-            "StartArt": "FU",
-            "Frequenz": 87,
-            "Reparaturschalter": "extern",
-            "Reissleine": "links",
-            "Antriebe": 3,
+            "id": "F102",
+            "label": "Splitter",
+            "length": 5,
+            "motor_rated_power": 5.5,
+            "start_type": "FU",
+            "frequency": 87,
+            "repair_switch": "extern",
+            "pull_cord": "links",
+            "drive_count": 3,
+            "cable_cross_section": 16,
         }),
         (fb_def, {
-            "ID": "H103",
-            "Bezeichnung": "Überkorn",
-            "Laenge": 25,
-            "MotorLeistung": 9.2,
-            "StartArt": "DOL",
-            "Reparaturschalter": "integriert",
-            "Reissleine": "beidseitig",
+            "id": "H103",
+            "label": "Überkorn",
+            "length": 25,
+            "motor_rated_power": 9.2,
+            "start_type": "DOL",
+            "repair_switch": "integriert",
+            "pull_cord": "beidseitig",
+            "avg_cable_length": 40,
         }),
         (fb_def, {
-            "ID": "H104",
-            "Bezeichnung": "Unterkorn",
-            "Laenge": 10,
-            "MotorLeistung": 4.0,
-            "StartArt": "DOL",
-            "Reparaturschalter": "integriert",
-            "Reissleine": "einseitig",
+            "id": "H104",
+            "label": "Unterkorn",
+            "length": 10,
+            "motor_rated_power": 4.0,
+            "start_type": "DOL",
+            "repair_switch": "integriert",
+            "pull_cord": "einseitig",
         }),
     ]
 
